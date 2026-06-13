@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CQ Vault</title>
+
+<!-- PWA: Manifest & Theme -->
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#020810">
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- iOS PWA support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="CQ Vault">
+<link rel="apple-touch-icon" href="/icons/icon-192.png">
+
+<!-- Favicon -->
+<link rel="icon" type="image/png" sizes="192x192" href="/icons/icon-192.png">
+<style>
+/* ── SCOPED TO .cqvault — safe for Blogger embed ── */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap');
+
+.cqvault * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+.cqvault {
+  --cq-bg:       #020810;
+  --cq-surface:  #070f1e;
+  --cq-card:     #0b1628;
+  --cq-border:   #0d2040;
+  --cq-teal:     #00f5d4;
+  --cq-blue:     #0080ff;
+  --cq-dim:      #1a3a5c;
+  --cq-text:     #c8ddf0;
+  --cq-muted:    #4a6a8a;
+  --cq-danger:   #ff4466;
+  --cq-warn:     #ffaa00;
+  --cq-success:  #00e5a0;
+  --cq-font-display: 'Cinzel', Georgia, serif;
+  --cq-font-mono:    'Courier New', Courier, monospace;
+
+  font-family: var(--cq-font-mono);
+  background: var(--cq-bg);
+  color: var(--cq-text);
+  min-height: 520px;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ── TAB BAR ── */
+.cqvault .cqv-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--cq-border);
+  background: var(--cq-surface);
+}
+
+.cqvault .cqv-tab {
+  flex: 1;
+  padding: 14px 10px;
+  font-family: var(--cq-font-display);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cq-muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.cqvault .cqv-tab:hover {
+  color: var(--cq-text);
+}
+
+.cqvault .cqv-tab.active {
+  color: var(--cq-teal);
+  border-bottom-color: var(--cq-teal);
+}
+
+/* ── PAGES ── */
+.cqvault .cqv-page {
+  display: none;
+  padding: 22px 20px;
+  animation: cqvFadeIn 0.25s ease;
+}
+
+.cqvault .cqv-page.active {
+  display: block;
+}
+
+@keyframes cqvFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── SECTION HEADER ── */
+.cqvault .cqv-heading {
+  font-family: var(--cq-font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.15em;
+  color: var(--cq-teal);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cqvault .cqv-heading::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, var(--cq-dim), transparent);
+}
+
+/* ── STEP BLOCKS ── */
+.cqvault .cqv-step {
+  background: var(--cq-card);
+  border: 1px solid var(--cq-border);
+  border-radius: 5px;
+  padding: 16px 18px;
+  margin-bottom: 14px;
+}
+
+.cqvault .cqv-step-label {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  color: var(--cq-blue);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  font-family: var(--cq-font-display);
+}
+
+/* ── BUTTON ── */
+.cqvault .cqv-btn {
+  font-family: var(--cq-font-display);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border-radius: 3px;
+  border: 1px solid var(--cq-teal);
+  background: transparent;
+  color: var(--cq-teal);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.cqvault .cqv-btn:hover:not(:disabled) {
+  background: var(--cq-teal);
+  color: var(--cq-bg);
+}
+
+.cqvault .cqv-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.cqvault .cqv-btn-blue {
+  border-color: var(--cq-blue);
+  color: var(--cq-blue);
+}
+
+.cqvault .cqv-btn-blue:hover:not(:disabled) {
+  background: var(--cq-blue);
+  color: #fff;
+}
+
+.cqvault .cqv-btn-danger {
+  border-color: var(--cq-danger);
+  color: var(--cq-danger);
+}
+
+.cqvault .cqv-btn-danger:hover:not(:disabled) {
+  background: var(--cq-danger);
+  color: #fff;
+}
+
+.cqvault .cqv-btn-sm {
+  padding: 5px 12px;
+  font-size: 0.62rem;
+}
+
+/* ── TOGGLE ── */
+.cqvault .cqv-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.cqvault .cqv-toggle {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.cqvault .cqv-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  position: absolute;
+}
+
+.cqvault .cqv-toggle-track {
+  position: absolute;
+  inset: 0;
+  background: var(--cq-dim);
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.cqvault .cqv-toggle input:checked + .cqv-toggle-track {
+  background: var(--cq-teal);
+}
+
+.cqvault .cqv-toggle-track::after {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+
+.cqvault .cqv-toggle input:checked + .cqv-toggle-track::after {
+  transform: translateX(16px);
+}
+
+.cqvault .cqv-toggle-label {
+  font-size: 0.72rem;
+  color: var(--cq-text);
+}
+
+/* ── INPUT ── */
+.cqvault .cqv-input {
+  width: 100%;
+  background: var(--cq-surface);
+  border: 1px solid var(--cq-dim);
+  border-radius: 3px;
+  color: var(--cq-text);
+  font-family: var(--cq-font-mono);
+  font-size: 0.8rem;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.cqvault .cqv-input:focus {
+  border-color: var(--cq-teal);
+}
+
+.cqvault .cqv-input-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.cqvault .cqv-input-row .cqv-input {
+  flex: 1;
+}
+
+/* ── RADIO GROUP ── */
+.cqvault .cqv-radio-group {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+
+.cqvault .cqv-radio-opt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  font-size: 0.72rem;
+}
+
+.cqvault .cqv-radio-opt input[type=radio] {
+  accent-color: var(--cq-teal);
+  width: 14px;
+  height: 14px;
+}
+
+/* ── FILE LIST ── */
+.cqvault .cqv-filelist {
+  margin-top: 10px;
+  max-height: 180px;
+  overflow-y: auto;
+  border: 1px solid var(--cq-border);
+  border-radius: 4px;
+}
+
+.cqvault .cqv-filelist::-webkit-scrollbar { width: 5px; }
+.cqvault .cqv-filelist::-webkit-scrollbar-track { background: var(--cq-surface); }
+.cqvault .cqv-filelist::-webkit-scrollbar-thumb { background: var(--cq-dim); border-radius: 3px; }
+
+.cqvault .cqv-filerow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 12px;
+  border-bottom: 1px solid var(--cq-border);
+  font-size: 0.7rem;
+}
+
+.cqvault .cqv-filerow:last-child { border-bottom: none; }
+
+.cqvault .cqv-filerow-name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--cq-text);
+}
+
+.cqvault .cqv-filerow-size {
+  color: var(--cq-muted);
+  white-space: nowrap;
+}
+
+.cqvault .cqv-filerow-status {
+  font-size: 0.65rem;
+  white-space: nowrap;
+  min-width: 70px;
+  text-align: right;
+}
+
+.cqvault .cqv-status-pending  { color: var(--cq-muted); }
+.cqvault .cqv-status-working  { color: var(--cq-warn); }
+.cqvault .cqv-status-done     { color: var(--cq-success); }
+.cqvault .cqv-status-error    { color: var(--cq-danger); }
+
+/* ── PROGRESS BAR ── */
+.cqvault .cqv-progress-wrap {
+  margin-top: 12px;
+  display: none;
+}
+
+.cqvault .cqv-progress-wrap.visible { display: block; }
+
+/* ── LOG PANEL ── */
+.cqvault .cqv-log-panel {
+  margin-top: 12px;
+  display: none;
+  background: #020508;
+  border: 1px solid var(--cq-dim);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.cqvault .cqv-log-panel.visible { display: block; }
+
+.cqvault .cqv-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 10px;
+  background: var(--cq-surface);
+  border-bottom: 1px solid var(--cq-border);
+  cursor: pointer;
+  user-select: none;
+}
+
+.cqvault .cqv-log-title {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  color: var(--cq-muted);
+  font-family: var(--cq-font-display);
+  text-transform: uppercase;
+}
+
+.cqvault .cqv-log-toggle-icon {
+  font-size: 0.65rem;
+  color: var(--cq-muted);
+}
+
+.cqvault .cqv-log-body {
+  max-height: 180px;
+  overflow-y: auto;
+  padding: 8px 10px;
+  font-size: 0.65rem;
+  line-height: 1.7;
+  font-family: var(--cq-font-mono);
+}
+
+.cqvault .cqv-log-body::-webkit-scrollbar { width: 4px; }
+.cqvault .cqv-log-body::-webkit-scrollbar-track { background: transparent; }
+.cqvault .cqv-log-body::-webkit-scrollbar-thumb { background: var(--cq-dim); border-radius: 3px; }
+
+.cqvault .cqv-log-entry { display: block; padding: 1px 0; }
+.cqvault .cqv-log-ok    { color: var(--cq-success); }
+.cqvault .cqv-log-err   { color: var(--cq-danger); }
+.cqvault .cqv-log-warn  { color: var(--cq-warn); }
+.cqvault .cqv-log-info  { color: var(--cq-muted); }
+
+.cqvault .cqv-progress-bar-bg {
+  background: var(--cq-dim);
+  border-radius: 3px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.cqvault .cqv-progress-bar-fill {
+  height: 100%;
+  background: linear-gradient(to right, var(--cq-blue), var(--cq-teal));
+  border-radius: 3px;
+  transition: width 0.2s;
+  width: 0%;
+}
+
+.cqvault .cqv-progress-label {
+  font-size: 0.65rem;
+  color: var(--cq-muted);
+  margin-top: 5px;
+  text-align: right;
+}
+
+/* ── NOTICE / ALERT ── */
+.cqvault .cqv-notice {
+  font-size: 0.7rem;
+  padding: 8px 12px;
+  border-radius: 3px;
+  margin-top: 10px;
+  line-height: 1.5;
+}
+
+.cqvault .cqv-notice-warn {
+  background: rgba(255,170,0,0.08);
+  border: 1px solid rgba(255,170,0,0.3);
+  color: var(--cq-warn);
+}
+
+.cqvault .cqv-notice-info {
+  background: rgba(0,128,255,0.07);
+  border: 1px solid rgba(0,128,255,0.25);
+  color: #7ab8ff;
+}
+
+.cqvault .cqv-notice-danger {
+  background: rgba(255,68,102,0.07);
+  border: 1px solid rgba(255,68,102,0.25);
+  color: var(--cq-danger);
+}
+
+.cqvault .cqv-notice-success {
+  background: rgba(0,229,160,0.07);
+  border: 1px solid rgba(0,229,160,0.25);
+  color: var(--cq-success);
+}
+
+/* ── VIEWER GALLERY ── */
+.cqvault .cqv-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.cqvault .cqv-gallery-card {
+  background: var(--cq-card);
+  border: 1px solid var(--cq-border);
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.15s;
+  position: relative;
+}
+
+.cqvault .cqv-gallery-card:hover {
+  border-color: var(--cq-teal);
+  transform: translateY(-2px);
+}
+
+.cqvault .cqv-gallery-thumb {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.cqvault .cqv-gallery-thumb-placeholder {
+  width: 100%;
+  aspect-ratio: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: var(--cq-surface);
+}
+
+.cqvault .cqv-lock-icon {
+  font-size: 1.4rem;
+  opacity: 0.5;
+}
+
+.cqvault .cqv-gallery-name {
+  font-size: 0.58rem;
+  padding: 5px 6px;
+  color: var(--cq-muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.cqvault .cqv-gallery-decrypting {
+  position: absolute;
+  inset: 0;
+  background: rgba(2,8,16,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.6rem;
+  color: var(--cq-teal);
+  letter-spacing: 0.1em;
+}
+
+/* ── LIGHTBOX ── */
+.cqvault .cqv-lightbox {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(2,8,16,0.93);
+  z-index: 99999;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.cqvault .cqv-lightbox.open {
+  display: flex;
+}
+
+.cqvault .cqv-lightbox-img {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border: 1px solid var(--cq-dim);
+  border-radius: 3px;
+}
+
+.cqvault .cqv-lightbox-bar {
+  margin-top: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.cqvault .cqv-lightbox-name {
+  font-size: 0.7rem;
+  color: var(--cq-muted);
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.cqvault .cqv-lightbox-close {
+  position: absolute;
+  top: 18px;
+  right: 22px;
+  font-size: 1.4rem;
+  color: var(--cq-muted);
+  cursor: pointer;
+  background: none;
+  border: none;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.cqvault .cqv-lightbox-close:hover { color: var(--cq-teal); }
+
+.cqvault .cqv-lightbox-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 1.6rem;
+  background: rgba(7,15,30,0.7);
+  border: 1px solid var(--cq-dim);
+  color: var(--cq-text);
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 3px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.cqvault .cqv-lightbox-nav:hover { border-color: var(--cq-teal); color: var(--cq-teal); }
+.cqvault .cqv-lightbox-prev { left: 14px; }
+.cqvault .cqv-lightbox-next { right: 14px; }
+
+/* ── EMPTY STATE ── */
+.cqvault .cqv-empty {
+  text-align: center;
+  padding: 36px 20px;
+  color: var(--cq-muted);
+  font-size: 0.72rem;
+  line-height: 1.8;
+}
+
+.cqvault .cqv-empty-icon { font-size: 2rem; margin-bottom: 10px; }
+
+/* ── SUFFIX INPUT ── */
+.cqvault .cqv-suffix-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.cqvault .cqv-suffix-row .cqv-input {
+  width: 140px;
+  flex: none;
+}
+
+.cqvault .cqv-suffix-preview {
+  font-size: 0.65rem;
+  color: var(--cq-muted);
+}
+
+/* ── SCROLLBAR global for page ── */
+.cqvault .cqv-page-scroll {
+  max-height: calc(100vh - 80px);
+  overflow-y: auto;
+  padding: 22px 20px;
+}
+
+.cqvault .cqv-page-scroll::-webkit-scrollbar { width: 5px; }
+.cqvault .cqv-page-scroll::-webkit-scrollbar-track { background: transparent; }
+.cqvault .cqv-page-scroll::-webkit-scrollbar-thumb { background: var(--cq-dim); border-radius: 3px; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 480px) {
+  .cqvault .cqv-gallery {
+    grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+  }
+  .cqvault .cqv-tab { font-size: 0.62rem; padding: 12px 6px; }
+}
+/* ── PWA full-viewport shell ── */
+html, body {
+  margin: 0; padding: 0;
+  background: #020810;
+  min-height: 100dvh;
+  /* Safe area insets for notched phones */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+</style>
+</head>
+<body>
+
+<!-- PWA Update Banner (hidden by default) -->
+<div id="cqv-update-banner" style="
+  display:none; position:fixed; top:0; left:0; right:0; z-index:99999;
+  background:#020810; border-bottom:1px solid #00f5d4;
+  padding:10px 16px; text-align:center;
+  font-family:'Courier New',monospace; font-size:0.8rem; color:#00f5d4;
+  box-shadow:0 2px 12px rgba(0,245,212,0.15);
+  padding-top:calc(env(safe-area-inset-top) + 10px);
+">
+  <span>CQ Vault has been updated.</span>
+  <button onclick="cqvApplyUpdate()" style="
+    margin-left:12px; background:#00f5d4; color:#020810;
+    border:none; border-radius:4px; padding:4px 12px;
+    font-family:'Courier New',monospace; font-size:0.78rem;
+    font-weight:700; cursor:pointer;
+  ">Reload</button>
+  <button onclick="document.getElementById('cqv-update-banner').style.display='none'" style="
+    margin-left:8px; background:transparent; color:#00f5d4;
+    border:1px solid #00f5d430; border-radius:4px; padding:4px 10px;
+    font-family:'Courier New',monospace; font-size:0.78rem; cursor:pointer;
+  ">Later</button>
+</div>
+
+<div class="cqvault" id="cqVault">
+
+  <!-- TAB BAR -->
+  <div class="cqv-tabs">
+    <button class="cqv-tab active" onclick="cqvSwitchTab('enc')">Encrypter</button>
+    <button class="cqv-tab" onclick="cqvSwitchTab('view')">Viewer</button>
+  </div>
+
+  <!-- ══════════════ ENCRYPTER PAGE ══════════════ -->
+  <div class="cqv-page active" id="cqv-enc">
+    <div class="cqv-page-scroll">
+
+      <div class="cqv-heading">Encrypt Images</div>
+
+      <!-- STEP 1: Folder -->
+      <div class="cqv-step">
+        <div class="cqv-step-label">Step 1 — Select Folder</div>
+        <button class="cqv-btn" id="cqvEncPickBtn" onclick="cqvEncPickFolder()">Choose Folder</button>
+        <div id="cqvEncFolderName" style="font-size:0.7rem;color:var(--cq-muted);margin-top:8px;"></div>
+
+        <div class="cqv-toggle-row" style="margin-top:12px;">
+          <label class="cqv-toggle">
+            <input type="checkbox" id="cqvSubfolderToggle" onchange="cqvEncRescan()">
+            <span class="cqv-toggle-track"></span>
+          </label>
+          <span class="cqv-toggle-label">Include subfolders</span>
+        </div>
+
+        <div id="cqvEncFileList" class="cqv-filelist" style="display:none;margin-top:12px;"></div>
+        <div id="cqvEncScanInfo" style="font-size:0.65rem;color:var(--cq-muted);margin-top:6px;"></div>
+      </div>
+
+      <!-- STEP 2: Output naming -->
+      <div class="cqv-step">
+        <div class="cqv-step-label">Step 2 — Output Naming</div>
+
+        <div class="cqv-radio-group">
+          <label class="cqv-radio-opt">
+            <input type="radio" name="cqvNaming" value="suffix" checked onchange="cqvUpdateNamingPreview()">
+            Keep name + suffix
+          </label>
+          <label class="cqv-radio-opt">
+            <input type="radio" name="cqvNaming" value="rename" onchange="cqvUpdateNamingPreview()">
+            Rename files
+          </label>
+        </div>
+
+        <div class="cqv-suffix-row" id="cqvSuffixRow">
+          <span style="font-size:0.7rem;color:var(--cq-text);">Suffix:</span>
+          <input class="cqv-input" id="cqvSuffixInput" value=".cqen" oninput="cqvUpdateNamingPreview()" style="width:120px;">
+          <span class="cqv-suffix-preview" id="cqvNamingPreview">e.g. photo.jpg.cqen</span>
+        </div>
+
+        <div id="cqvRenameRow" style="display:none;margin-top:8px;">
+          <div style="font-size:0.7rem;color:var(--cq-text);margin-bottom:6px;">Base name (index appended):</div>
+          <div class="cqv-input-row">
+            <input class="cqv-input" id="cqvBaseNameInput" placeholder="vault_img" oninput="cqvUpdateNamingPreview()">
+            <span class="cqv-suffix-preview" id="cqvRenamePreview">e.g. vault_img_001.cqen</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Password -->
+      <div class="cqv-step">
+        <div class="cqv-step-label">Step 3 — Encryption Password</div>
+        <div class="cqv-input-row">
+          <input class="cqv-input" type="password" id="cqvEncPass" placeholder="Enter password">
+          <button class="cqv-btn cqv-btn-sm" onclick="cqvTogglePass('cqvEncPass',this)">Show</button>
+        </div>
+        <div class="cqv-input-row" style="margin-top:8px;">
+          <input class="cqv-input" type="password" id="cqvEncPassConfirm" placeholder="Confirm password">
+        </div>
+        <div id="cqvPassMatch" style="font-size:0.65rem;margin-top:5px;"></div>
+      </div>
+
+      <!-- STEP 4: Options + Encrypt -->
+      <div class="cqv-step">
+        <div class="cqv-step-label">Step 4 — Options &amp; Encrypt</div>
+
+        <div class="cqv-toggle-row">
+          <label class="cqv-toggle">
+            <input type="checkbox" id="cqvDeleteOriginalsToggle">
+            <span class="cqv-toggle-track"></span>
+          </label>
+          <span class="cqv-toggle-label">Delete originals after encryption</span>
+        </div>
+        <div class="cqv-notice cqv-notice-warn" style="margin-top:8px;font-size:0.65rem;">
+          Original files are deleted only after their .cqen counterpart is confirmed saved. This cannot be undone.
+        </div>
+
+        <div class="cqv-toggle-row" style="margin-top:12px;">
+          <label class="cqv-toggle">
+            <input type="checkbox" id="cqvFastModeToggle" checked>
+            <span class="cqv-toggle-track"></span>
+          </label>
+          <span class="cqv-toggle-label">Fast mode (recommended for mobile)</span>
+        </div>
+        <div style="font-size:0.62rem;color:var(--cq-muted);margin-top:4px;margin-left:46px;">
+          Fast: 10,000 PBKDF2 iterations &mdash; ~10x quicker, slightly less brute-force resistant.<br>
+          Off: 200,000 iterations &mdash; maximum security, slower on phone.
+        </div>
+
+        <button class="cqv-btn cqv-btn-blue" id="cqvEncRunBtn" onclick="cqvRunEncrypt()" disabled style="margin-top:14px;">
+          Encrypt All Images
+        </button>
+
+        <div class="cqv-progress-wrap" id="cqvEncProgress">
+          <div class="cqv-progress-bar-bg">
+            <div class="cqv-progress-bar-fill" id="cqvEncBar"></div>
+          </div>
+          <div class="cqv-progress-label" id="cqvEncProgressLabel"></div>
+        </div>
+
+        <div id="cqvEncResult"></div>
+
+        <!-- On-screen log -->
+        <div class="cqv-log-panel" id="cqvLogPanel">
+          <div class="cqv-log-header" onclick="cqvToggleLog()">
+            <span class="cqv-log-title">Encryption Log</span>
+            <span class="cqv-log-toggle-icon" id="cqvLogToggleIcon">&#9650;</span>
+          </div>
+          <div class="cqv-log-body" id="cqvLogBody"></div>
+        </div>
+      </div>
+
+    </div><!-- end scroll -->
+  </div><!-- end enc page -->
+
+  <!-- ══════════════ VIEWER PAGE ══════════════ -->
+  <div class="cqv-page" id="cqv-view">
+    <div class="cqv-page-scroll">
+
+      <div class="cqv-heading">View Encrypted Images</div>
+
+      <!-- Folder pick -->
+      <div class="cqv-step">
+        <div class="cqv-step-label">Step 1 — Select Encrypted Folder</div>
+        <button class="cqv-btn" onclick="cqvViewPickFolder()">Choose Folder</button>
+        <div id="cqvViewFolderName" style="font-size:0.7rem;color:var(--cq-muted);margin-top:8px;"></div>
+
+        <div class="cqv-toggle-row" style="margin-top:12px;">
+          <label class="cqv-toggle">
+            <input type="checkbox" id="cqvViewSubToggle" onchange="cqvViewRescan()">
+            <span class="cqv-toggle-track"></span>
+          </label>
+          <span class="cqv-toggle-label">Include subfolders</span>
+        </div>
+
+        <div id="cqvViewScanInfo" style="font-size:0.65rem;color:var(--cq-muted);margin-top:6px;"></div>
+      </div>
+
+      <!-- Password -->
+      <div class="cqv-step">
+        <div class="cqv-step-label">Step 2 — Decryption Password</div>
+        <div class="cqv-input-row">
+          <input class="cqv-input" type="password" id="cqvViewPass" placeholder="Enter password">
+          <button class="cqv-btn cqv-btn-sm" onclick="cqvTogglePass('cqvViewPass',this)">Show</button>
+        </div>
+        <button class="cqv-btn cqv-btn-blue" id="cqvViewUnlockBtn"
+          style="margin-top:10px;" onclick="cqvUnlockGallery()" disabled>
+          Unlock Gallery
+        </button>
+        <div id="cqvViewPassResult"></div>
+      </div>
+
+      <!-- Gallery -->
+      <div id="cqvGalleryWrap" style="display:none;">
+        <div class="cqv-heading" style="margin-top:6px;">Gallery</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <button class="cqv-btn cqv-btn-sm" onclick="cqvDecryptAll()">Decrypt All Thumbs</button>
+          <button class="cqv-btn cqv-btn-sm cqv-btn-danger" onclick="cqvClearSession()">Clear Session</button>
+        </div>
+        <div class="cqv-gallery" id="cqvGallery"></div>
+      </div>
+
+    </div><!-- end scroll -->
+  </div><!-- end view page -->
+
+  <!-- LIGHTBOX -->
+  <div class="cqv-lightbox" id="cqvLightbox">
+    <button class="cqv-lightbox-close" onclick="cqvCloseLightbox()">x</button>
+    <button class="cqv-lightbox-nav cqv-lightbox-prev" onclick="cqvLightboxNav(-1)">&#8592;</button>
+    <button class="cqv-lightbox-nav cqv-lightbox-next" onclick="cqvLightboxNav(1)">&#8594;</button>
+    <img class="cqv-lightbox-img" id="cqvLightboxImg" src="" alt="">
+    <div class="cqv-lightbox-bar">
+      <span class="cqv-lightbox-name" id="cqvLightboxName"></span>
+      <button class="cqv-btn cqv-btn-sm" onclick="cqvDownloadCurrent()">Save</button>
+    </div>
+  </div>
+
+</div><!-- end .cqvault -->
+
+<script>
+// ═══════════════════════════════════════════════════════
+//  CQ VAULT — CQEN FORMAT ENCRYPTER / VIEWER
+//  Magic: CQEN (0x43 0x51 0x45 0x4E)
+// ═══════════════════════════════════════════════════════
+
+const CQEN_MAGIC    = new Uint8Array([0x43,0x51,0x45,0x4E]);
+const CQEN_VERSION_FAST = 0x02;  // 10,000 iterations
+const CQEN_VERSION_FULL = 0x01;  // 200,000 iterations
+const CQEN_TYPE_IMG = 0x01;
+const PBKDF2_ITER_FAST = 10000;
+const PBKDF2_ITER_FULL = 200000;
+
+const ALLOWED_MIME = ['image/jpeg','image/png','image/webp','image/gif'];
+const ALLOWED_EXT  = ['.jpg','.jpeg','.png','.webp','.gif'];
+
+// ── State ──
+let encFolderHandle  = null;
+let encFiles         = [];           // [{pathParts, name, size, type}] — no cached handles
+let viewFolderHandle = null;
+let viewFiles        = [];           // [{pathParts, name}] — no cached handles
+let sessionCache     = new Map();    // relPath → blobURL
+let galleryItems     = [];           // same order as viewFiles
+let lightboxIndex    = -1;
+let sessionKey       = null;         // cached derived key (AES-GCM CryptoKey) - per-file keys derived fresh
+
+// ── TABS ──
+function cqvSwitchTab(tab) {
+  document.querySelectorAll('.cqv-tab').forEach((t,i)=>{
+    t.classList.toggle('active', (i===0 && tab==='enc')||(i===1 && tab==='view'));
+  });
+  document.getElementById('cqv-enc').classList.toggle('active', tab==='enc');
+  document.getElementById('cqv-view').classList.toggle('active', tab==='view');
+}
+
+// ── UTILS ──
+function cqvTogglePass(id, btn) {
+  const el = document.getElementById(id);
+  if (el.type==='password') { el.type='text'; btn.textContent='Hide'; }
+  else { el.type='password'; btn.textContent='Show'; }
+}
+
+function cqvFmtSize(b) {
+  if(b<1024) return b+'B';
+  if(b<1048576) return (b/1024).toFixed(1)+'KB';
+  return (b/1048576).toFixed(1)+'MB';
+}
+
+function cqvNotice(html, type='info') {
+  return `<div class="cqv-notice cqv-notice-${type}">${html}</div>`;
+}
+
+function cqvIsImage(name) {
+  return ALLOWED_EXT.some(e=>name.toLowerCase().endsWith(e));
+}
+
+// ── RECURSIVE FOLDER SCAN ──
+// Stores path parts only — NO cached handles or File objects.
+// Mobile Chrome invalidates handles between scan and use; re-walk fresh at encrypt time.
+async function cqvScanFolder(dirHandle, includeSubs, pathParts=[]) {
+  const results = [];
+  for await (const [name, handle] of dirHandle.entries()) {
+    const parts = [...pathParts, name];
+    if (handle.kind === 'file') {
+      if (cqvIsImage(name)) {
+        // Read size/type NOW while handle is fresh, just for display
+        let size = 0, type = '';
+        try { const f = await handle.getFile(); size = f.size; type = f.type; } catch(e) {}
+        results.push({ pathParts: parts, name, size, type });
+      }
+    } else if (handle.kind === 'directory' && includeSubs) {
+      const sub = await cqvScanFolder(handle, true, parts);
+      results.push(...sub);
+    }
+  }
+  return results;
+}
+
+async function cqvScanCqenFolder(dirHandle, includeSubs, pathParts=[]) {
+  const results = [];
+  for await (const [name, handle] of dirHandle.entries()) {
+    const parts = [...pathParts, name];
+    if (handle.kind === 'file') {
+      if (name.toLowerCase().endsWith('.cqen')) {
+        results.push({ pathParts: parts, name });
+      }
+    } else if (handle.kind === 'directory' && includeSubs) {
+      const sub = await cqvScanCqenFolder(handle, true, parts);
+      results.push(...sub);
+    }
+  }
+  return results;
+}
+
+// Re-walk from root to get a fresh file handle right before use
+async function cqvResolveFreshHandle(rootHandle, pathParts, mode='read') {
+  let dir = rootHandle;
+  for (let i = 0; i < pathParts.length - 1; i++) {
+    dir = await dir.getDirectoryHandle(pathParts[i], { create: false });
+  }
+  const fileName = pathParts[pathParts.length - 1];
+  return { dir, fileHandle: await dir.getFileHandle(fileName, { create: false }) };
+}
+
+async function cqvGetFreshFile(rootHandle, pathParts) {
+  const { fileHandle } = await cqvResolveFreshHandle(rootHandle, pathParts);
+  return fileHandle.getFile();
+}
+
+async function cqvGetFreshWriteDir(rootHandle, pathParts) {
+  // Returns the parent dir handle fresh, for creating output file in it
+  let dir = rootHandle;
+  for (let i = 0; i < pathParts.length - 1; i++) {
+    dir = await dir.getDirectoryHandle(pathParts[i], { create: false });
+  }
+  return dir;
+}
+
+// ══════════════════════════════════════════
+//  ENCRYPTER
+// ══════════════════════════════════════════
+
+async function cqvEncPickFolder() {
+  try {
+    encFolderHandle = await window.showDirectoryPicker({ mode:'readwrite' });
+    document.getElementById('cqvEncFolderName').textContent = 'Folder: '+encFolderHandle.name;
+    await cqvEncRescan();
+  } catch(e) { if(e.name!=='AbortError') cqvShowEncResult(cqvNotice('Folder access denied.','danger')); }
+}
+
+async function cqvEncRescan() {
+  if (!encFolderHandle) return;
+  const includeSubs = document.getElementById('cqvSubfolderToggle').checked;
+  const listEl = document.getElementById('cqvEncFileList');
+  const infoEl = document.getElementById('cqvEncScanInfo');
+  listEl.style.display = 'none';
+  listEl.innerHTML = '';
+  infoEl.textContent = 'Scanning...';
+
+  encFiles = await cqvScanFolder(encFolderHandle, includeSubs);
+  infoEl.textContent = encFiles.length + ' image(s) found.';
+
+  if (encFiles.length === 0) { listEl.style.display='none'; cqvUpdateEncBtn(); return; }
+
+  listEl.style.display = 'block';
+  encFiles.forEach((f,i) => {
+    const relPath = f.pathParts.join('/');
+    const row = document.createElement('div');
+    row.className = 'cqv-filerow';
+    row.id = 'cqvEncRow_'+i;
+    row.innerHTML = `
+      <span class="cqv-filerow-name" title="${relPath}">${relPath}</span>
+      <span class="cqv-filerow-size">${cqvFmtSize(f.size)}</span>
+      <span class="cqv-filerow-status cqv-status-pending" id="cqvEncSt_${i}">Pending</span>
+    `;
+    listEl.appendChild(row);
+  });
+  cqvUpdateEncBtn();
+}
+
+function cqvUpdateNamingPreview() {
+  const mode = document.querySelector('input[name="cqvNaming"]:checked').value;
+  document.getElementById('cqvSuffixRow').style.display   = mode==='suffix' ? 'flex' : 'none';
+  document.getElementById('cqvRenameRow').style.display   = mode==='rename' ? 'block' : 'none';
+
+  if (mode==='suffix') {
+    const sfx = document.getElementById('cqvSuffixInput').value || '.cqen';
+    document.getElementById('cqvNamingPreview').textContent = 'e.g. photo.jpg'+sfx;
+  } else {
+    const base = document.getElementById('cqvBaseNameInput').value || 'vault_img';
+    document.getElementById('cqvRenamePreview').textContent = 'e.g. '+base+'_001.cqen';
+  }
+}
+
+function cqvGetOutputName(origName, index) {
+  const mode = document.querySelector('input[name="cqvNaming"]:checked').value;
+  if (mode==='suffix') {
+    const sfx = document.getElementById('cqvSuffixInput').value || '.cqen';
+    return origName + sfx;
+  } else {
+    const base = document.getElementById('cqvBaseNameInput').value || 'vault_img';
+    return base + '_' + String(index+1).padStart(3,'0') + '.cqen';
+  }
+}
+
+document.getElementById('cqvEncPass').addEventListener('input', cqvUpdateEncBtn);
+document.getElementById('cqvEncPassConfirm').addEventListener('input', cqvUpdateEncBtn);
+
+function cqvUpdateEncBtn() {
+  const p1 = document.getElementById('cqvEncPass').value;
+  const p2 = document.getElementById('cqvEncPassConfirm').value;
+  const matchEl = document.getElementById('cqvPassMatch');
+  let ok = encFiles.length > 0 && p1.length >= 4;
+  if (p1.length >= 1 && p2.length >= 1) {
+    if (p1===p2) { matchEl.textContent = 'Passwords match'; matchEl.style.color='var(--cq-success)'; }
+    else         { matchEl.textContent = 'Passwords do not match'; matchEl.style.color='var(--cq-danger)'; ok=false; }
+  } else { matchEl.textContent=''; }
+  document.getElementById('cqvEncRunBtn').disabled = !ok || (p1!==p2);
+}
+
+function cqvShowEncResult(html) {
+  document.getElementById('cqvEncResult').innerHTML = html;
+}
+
+// ── LOG ──
+let logCollapsed = false;
+function cqvLog(msg, type='info') {
+  const panel = document.getElementById('cqvLogPanel');
+  const body  = document.getElementById('cqvLogBody');
+  panel.classList.add('visible');
+  const ts   = new Date().toLocaleTimeString('en-GB',{hour12:false});
+  const span = document.createElement('span');
+  span.className = 'cqv-log-entry cqv-log-'+type;
+  span.textContent = '['+ts+'] '+msg;
+  body.appendChild(span);
+  body.scrollTop = body.scrollHeight;
+}
+
+function cqvClearLog() {
+  document.getElementById('cqvLogBody').innerHTML = '';
+  document.getElementById('cqvLogPanel').classList.remove('visible');
+}
+
+function cqvToggleLog() {
+  logCollapsed = !logCollapsed;
+  document.getElementById('cqvLogBody').style.display = logCollapsed ? 'none' : 'block';
+  document.getElementById('cqvLogToggleIcon').innerHTML = logCollapsed ? '&#9660;' : '&#9650;';
+}
+
+// ── CRYPTO CORE ──
+
+function cqvIterForVersion(version) {
+  return version === CQEN_VERSION_FAST ? PBKDF2_ITER_FAST : PBKDF2_ITER_FULL;
+}
+
+async function cqvDeriveKey(password, salt, iterations) {
+  const enc = new TextEncoder();
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', enc.encode(password), 'PBKDF2', false, ['deriveKey']
+  );
+  return crypto.subtle.deriveKey(
+    { name:'PBKDF2', salt, iterations, hash:'SHA-256' },
+    keyMaterial,
+    { name:'AES-GCM', length:256 },
+    false,
+    ['encrypt','decrypt']
+  );
+}
+
+// CQEN binary format builder
+// [4] MAGIC | [1] VERSION | [1] TYPE | [16] IV | [32] SALT
+// [2] filenameLen | [N] filename | [2] mimeLen | [M] mime
+// [4] origSize (uint32) | [4] timestamp (uint32)
+// [rest] AES-GCM ciphertext
+
+function cqvBuildHeader(iv, salt, origName, mimeType, origSize, timestamp, version) {
+  const enc = new TextEncoder();
+  const nameBytes = enc.encode(origName);
+  const mimeBytes = enc.encode(mimeType);
+
+  const headerSize = 4+1+1+16+32 + 2+nameBytes.length + 2+mimeBytes.length + 4+4;
+  const buf = new ArrayBuffer(headerSize);
+  const view = new DataView(buf);
+  const u8   = new Uint8Array(buf);
+  let offset = 0;
+
+  CQEN_MAGIC.forEach(b => u8[offset++]=b);
+  view.setUint8(offset++, version);
+  view.setUint8(offset++, CQEN_TYPE_IMG);
+  u8.set(iv, offset); offset+=16;
+  u8.set(salt, offset); offset+=32;
+  view.setUint16(offset, nameBytes.length, true); offset+=2;
+  u8.set(nameBytes, offset); offset+=nameBytes.length;
+  view.setUint16(offset, mimeBytes.length, true); offset+=2;
+  u8.set(mimeBytes, offset); offset+=mimeBytes.length;
+  view.setUint32(offset, origSize >>> 0, true); offset+=4;
+  view.setUint32(offset, timestamp >>> 0, true); offset+=4;
+
+  return u8;
+}
+
+function cqvParseHeader(u8) {
+  const view = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
+  for(let i=0;i<4;i++) if(u8[i]!==CQEN_MAGIC[i]) throw new Error('Not a CQEN file — magic bytes mismatch');
+  let offset = 4;
+  const version = view.getUint8(offset++);
+  const type    = view.getUint8(offset++);
+  const iv      = u8.slice(offset, offset+16); offset+=16;
+  const salt    = u8.slice(offset, offset+32); offset+=32;
+
+  const nameLen = view.getUint16(offset, true); offset+=2;
+  const dec = new TextDecoder();
+  const origName = dec.decode(u8.slice(offset, offset+nameLen)); offset+=nameLen;
+
+  const mimeLen  = view.getUint16(offset, true); offset+=2;
+  const mimeType = dec.decode(u8.slice(offset, offset+mimeLen)); offset+=mimeLen;
+
+  const origSize  = view.getUint32(offset, true); offset+=4;
+  const timestamp = view.getUint32(offset, true); offset+=4;
+
+  return { version, type, iv, salt, origName, mimeType, origSize, timestamp, headerEnd: offset };
+}
+
+async function cqvEncryptFile(file, password, origName) {
+  const fastMode = document.getElementById('cqvFastModeToggle').checked;
+  const version  = fastMode ? CQEN_VERSION_FAST : CQEN_VERSION_FULL;
+  const iterations = cqvIterForVersion(version);
+
+  const iv        = crypto.getRandomValues(new Uint8Array(16));
+  const salt      = crypto.getRandomValues(new Uint8Array(32));
+  const key       = await cqvDeriveKey(password, salt, iterations);
+  const plaintext = await file.arrayBuffer();
+  const ts        = Math.floor(Date.now()/1000);
+  const mimeType  = file.type || 'application/octet-stream';
+
+  const ciphertext = await crypto.subtle.encrypt(
+    { name:'AES-GCM', iv }, key, plaintext
+  );
+
+  const header = cqvBuildHeader(iv, salt, origName, mimeType, file.size, ts, version);
+  const out    = new Uint8Array(header.length + ciphertext.byteLength);
+  out.set(header, 0);
+  out.set(new Uint8Array(ciphertext), header.length);
+  return out;
+}
+
+async function cqvDecryptFile(buffer, password) {
+  const u8   = new Uint8Array(buffer);
+  const meta = cqvParseHeader(u8);
+  const iterations = cqvIterForVersion(meta.version);
+  const key  = await cqvDeriveKey(password, meta.salt, iterations);
+  const ciphertext = u8.slice(meta.headerEnd);
+  try {
+    const plaintext = await crypto.subtle.decrypt(
+      { name:'AES-GCM', iv: meta.iv }, key, ciphertext
+    );
+    return { plaintext, meta };
+  } catch(e) {
+    throw new Error('Decryption failed — wrong password or corrupted file');
+  }
+}
+
+// ── RUN ENCRYPT ──
+async function cqvRunEncrypt() {
+  const password = document.getElementById('cqvEncPass').value;
+  if (!password || encFiles.length===0) return;
+
+  const doDelete  = document.getElementById('cqvDeleteOriginalsToggle').checked;
+  const fastMode  = document.getElementById('cqvFastModeToggle').checked;
+  const progWrap  = document.getElementById('cqvEncProgress');
+  const progBar   = document.getElementById('cqvEncBar');
+  const progLbl   = document.getElementById('cqvEncProgressLabel');
+
+  progWrap.classList.add('visible');
+  document.getElementById('cqvEncRunBtn').disabled = true;
+  cqvShowEncResult('');
+  cqvClearLog();
+  cqvLog('Session start — '+encFiles.length+' file(s) | mode: '+(fastMode?'fast (10k)':'full (200k)')+' | delete originals: '+doDelete, 'info');
+
+  let done=0, deleted=0, errors=0;
+
+  for (let i=0; i<encFiles.length; i++) {
+    const entry = encFiles[i];
+    const { pathParts, name } = entry;
+    const relPath = pathParts.join('/');
+    const stEl = document.getElementById('cqvEncSt_'+i);
+    stEl.textContent='Encrypting'; stEl.className='cqv-filerow-status cqv-status-working';
+    cqvLog('['+(i+1)+'/'+encFiles.length+'] '+relPath, 'info');
+
+    try {
+      // Step A: fresh file read — re-walk directory tree right before getFile()
+      let file;
+      try {
+        file = await cqvGetFreshFile(encFolderHandle, pathParts);
+        cqvLog('  Read OK: '+cqvFmtSize(file.size), 'info');
+      } catch(e) {
+        throw new Error('Read failed (stale handle or permission): '+e.message);
+      }
+
+      // Step B: encrypt in memory
+      const outName = cqvGetOutputName(name, i);
+      let encData;
+      try {
+        encData = await cqvEncryptFile(file, password, name);
+        cqvLog('  Encrypted -> '+outName+' ('+cqvFmtSize(encData.length)+')', 'info');
+      } catch(e) {
+        throw new Error('Encryption failed: '+e.message);
+      }
+
+      // Step C: fresh write dir, write immediately with no extra awaits between
+      let parentDir;
+      try {
+        parentDir = await cqvGetFreshWriteDir(encFolderHandle, pathParts);
+      } catch(e) {
+        throw new Error('Cannot navigate to output folder: '+e.message);
+      }
+
+      try {
+        const outHandle = await parentDir.getFileHandle(outName, { create: true });
+        const writable  = await outHandle.createWritable();
+        await writable.write(encData);
+        await writable.close();
+      } catch(e) {
+        throw new Error('Write failed: '+e.message);
+      }
+
+      // Step D: verify by re-reading fresh
+      let writtenSize = 0;
+      try {
+        const verifyDir    = await cqvGetFreshWriteDir(encFolderHandle, pathParts);
+        const verifyHandle = await verifyDir.getFileHandle(outName, { create: false });
+        const verifyFile   = await verifyHandle.getFile();
+        writtenSize = verifyFile.size;
+        if (writtenSize < 10) throw new Error('Output too small: '+writtenSize+' bytes');
+      } catch(e) {
+        throw new Error('Verification failed: '+e.message);
+      }
+
+      cqvLog('  Saved & verified: '+outName+' ('+cqvFmtSize(writtenSize)+')', 'ok');
+      stEl.textContent='Saved'; stEl.className='cqv-filerow-status cqv-status-done';
+      done++;
+
+      // Step E: delete original if requested
+      if (doDelete) {
+        try {
+          const delDir = await cqvGetFreshWriteDir(encFolderHandle, pathParts);
+          await delDir.removeEntry(name);
+          cqvLog('  Deleted original: '+name, 'warn');
+          deleted++;
+        } catch(de) {
+          cqvLog('  Could not delete "'+name+'": '+de.message, 'err');
+        }
+      }
+
+    } catch(e) {
+      const msg = (e && e.message) ? e.message : String(e);
+      cqvLog('  ERROR: '+msg, 'err');
+      stEl.textContent='Error'; stEl.className='cqv-filerow-status cqv-status-error';
+      errors++;
+    }
+
+    const pct = Math.round(((i+1)/encFiles.length)*100);
+    progBar.style.width = pct+'%';
+    progLbl.textContent = (i+1)+' / '+encFiles.length;
+    await new Promise(r=>setTimeout(r,0));
+  }
+
+  const summary = done+' encrypted'+(deleted?' | '+deleted+' originals deleted':'')+(errors?' | '+errors+' error(s)':'');
+  cqvLog('Done — '+summary, errors?'warn':'ok');
+  cqvShowEncResult(cqvNotice(summary, errors?'warn':'success'));
+  document.getElementById('cqvEncRunBtn').disabled = false;
+}
+
+// ══════════════════════════════════════════
+//  VIEWER
+// ══════════════════════════════════════════
+
+async function cqvViewPickFolder() {
+  try {
+    viewFolderHandle = await window.showDirectoryPicker({ mode:'read' });
+    document.getElementById('cqvViewFolderName').textContent = 'Folder: '+viewFolderHandle.name;
+    await cqvViewRescan();
+  } catch(e) { if(e.name!=='AbortError') alert('Folder access denied.'); }
+}
+
+async function cqvViewRescan() {
+  if (!viewFolderHandle) return;
+  const includeSubs = document.getElementById('cqvViewSubToggle').checked;
+  document.getElementById('cqvViewScanInfo').textContent = 'Scanning...';
+  viewFiles = await cqvScanCqenFolder(viewFolderHandle, includeSubs);
+  document.getElementById('cqvViewScanInfo').textContent = viewFiles.length+' encrypted file(s) found.';
+  document.getElementById('cqvViewUnlockBtn').disabled = viewFiles.length===0;
+  // Reset gallery
+  document.getElementById('cqvGalleryWrap').style.display='none';
+  document.getElementById('cqvViewPassResult').innerHTML='';
+  galleryItems = [];
+  sessionCache.forEach(u=>URL.revokeObjectURL(u));
+  sessionCache.clear();
+}
+
+async function cqvUnlockGallery() {
+  const password = document.getElementById('cqvViewPass').value;
+  if (!password) return;
+  const resultEl = document.getElementById('cqvViewPassResult');
+
+  if (viewFiles.length===0) {
+    resultEl.innerHTML = cqvNotice('No .cqen files found in this folder.','warn');
+    return;
+  }
+
+  resultEl.innerHTML = cqvNotice('Verifying password...','info');
+
+  // Re-walk fresh — never use a cached handle
+  const firstPathParts = viewFiles[0].pathParts;
+  try {
+    const firstFile = await cqvGetFreshFile(viewFolderHandle, firstPathParts);
+    const buf       = await firstFile.arrayBuffer();
+    await cqvDecryptFile(buf, password);
+    resultEl.innerHTML = cqvNotice('Password accepted. Gallery unlocked.','success');
+  } catch(e) {
+    resultEl.innerHTML = cqvNotice('Wrong password or corrupted file: '+e.message,'danger');
+    return;
+  }
+
+  cqvBuildGallery(password);
+}
+
+function cqvBuildGallery(password) {
+  const gallery = document.getElementById('cqvGallery');
+  gallery.innerHTML = '';
+  galleryItems = [];
+  document.getElementById('cqvGalleryWrap').style.display='block';
+
+  viewFiles.forEach((f,i) => {
+    const card = document.createElement('div');
+    card.className = 'cqv-gallery-card';
+    card.id = 'cqvCard_'+i;
+    card.onclick = () => cqvOpenCard(i, password);
+
+    card.innerHTML = `
+      <div class="cqv-gallery-thumb-placeholder" id="cqvThumbPh_${i}">
+        <span class="cqv-lock-icon">&#128274;</span>
+      </div>
+      <div class="cqv-gallery-name" id="cqvCardName_${i}">${f.name.replace('.cqen','')}</div>
+    `;
+    gallery.appendChild(card);
+    // Store pathParts only — no cached handle
+    galleryItems.push({ pathParts: f.pathParts, name: f.name, blobUrl: null, origName: null });
+  });
+}
+
+async function cqvDecryptToBlob(index, password) {
+  if (galleryItems[index].blobUrl) return galleryItems[index].blobUrl;
+
+  // Re-walk fresh — never use a cached handle for viewer either
+  const file = await cqvGetFreshFile(viewFolderHandle, galleryItems[index].pathParts);
+  const buf  = await file.arrayBuffer();
+  const {plaintext, meta} = await cqvDecryptFile(buf, password);
+
+  const blob = new Blob([plaintext], {type: meta.mimeType});
+  const url  = URL.createObjectURL(blob);
+  galleryItems[index].blobUrl  = url;
+  galleryItems[index].origName = meta.origName;
+  galleryItems[index].mimeType = meta.mimeType;
+  sessionCache.set(galleryItems[index].pathParts.join('/'), url);
+  return url;
+}
+
+async function cqvOpenCard(index, password) {
+  const card = document.getElementById('cqvCard_'+index);
+
+  // Show spinner overlay
+  let overlay = card.querySelector('.cqv-gallery-decrypting');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.className = 'cqv-gallery-decrypting';
+    overlay.textContent = 'Decrypting...';
+    card.appendChild(overlay);
+  }
+  overlay.style.display='flex';
+
+  try {
+    const url = await cqvDecryptToBlob(index, password);
+    // Replace placeholder with thumb
+    const ph = document.getElementById('cqvThumbPh_'+index);
+    if (ph) {
+      const img = document.createElement('img');
+      img.className = 'cqv-gallery-thumb';
+      img.src = url;
+      ph.replaceWith(img);
+    }
+    overlay.style.display='none';
+    cqvOpenLightbox(index, password);
+  } catch(e) {
+    overlay.textContent = 'Error';
+    setTimeout(()=>overlay.style.display='none', 2000);
+  }
+}
+
+async function cqvDecryptAll() {
+  const password = document.getElementById('cqvViewPass').value;
+  for (let i=0; i<galleryItems.length; i++) {
+    const ph = document.getElementById('cqvThumbPh_'+i);
+    if (!ph) continue; // already decrypted
+    try {
+      const url = await cqvDecryptToBlob(i, password);
+      const img = document.createElement('img');
+      img.className = 'cqv-gallery-thumb';
+      img.src = url;
+      ph.replaceWith(img);
+    } catch(e) {}
+    await new Promise(r=>setTimeout(r,0));
+  }
+}
+
+function cqvClearSession() {
+  sessionCache.forEach(u=>URL.revokeObjectURL(u));
+  sessionCache.clear();
+  galleryItems.forEach(g=>{ g.blobUrl=null; });
+  document.getElementById('cqvGalleryWrap').style.display='none';
+  document.getElementById('cqvViewPass').value='';
+  document.getElementById('cqvViewPassResult').innerHTML='';
+  document.getElementById('cqvViewScanInfo').textContent='';
+  viewFiles=[];
+}
+
+// ── LIGHTBOX ──
+
+function cqvOpenLightbox(index, password) {
+  lightboxIndex = index;
+  const item = galleryItems[index];
+  const lb   = document.getElementById('cqvLightbox');
+  document.getElementById('cqvLightboxImg').src = item.blobUrl || '';
+  document.getElementById('cqvLightboxName').textContent = item.origName || item.name;
+  lb.classList.add('open');
+  lb._password = password;
+}
+
+function cqvCloseLightbox() {
+  document.getElementById('cqvLightbox').classList.remove('open');
+}
+
+async function cqvLightboxNav(dir) {
+  const lb = document.getElementById('cqvLightbox');
+  const password = lb._password;
+  let next = lightboxIndex + dir;
+  if (next < 0) next = galleryItems.length-1;
+  if (next >= galleryItems.length) next = 0;
+
+  // Decrypt if needed
+  if (!galleryItems[next].blobUrl) {
+    document.getElementById('cqvLightboxImg').src='';
+    document.getElementById('cqvLightboxName').textContent = 'Decrypting...';
+    try {
+      await cqvDecryptToBlob(next, password);
+      const ph = document.getElementById('cqvThumbPh_'+next);
+      if (ph) {
+        const img = document.createElement('img');
+        img.className='cqv-gallery-thumb';
+        img.src=galleryItems[next].blobUrl;
+        ph.replaceWith(img);
+      }
+    } catch(e) {}
+  }
+  lightboxIndex = next;
+  document.getElementById('cqvLightboxImg').src = galleryItems[next].blobUrl || '';
+  document.getElementById('cqvLightboxName').textContent = galleryItems[next].origName || galleryItems[next].name;
+}
+
+function cqvDownloadCurrent() {
+  const item = galleryItems[lightboxIndex];
+  if (!item || !item.blobUrl) return;
+  const a = document.createElement('a');
+  a.href = item.blobUrl;
+  a.download = item.origName || item.name;
+  a.click();
+}
+
+// Keyboard nav
+document.addEventListener('keydown', e => {
+  const lb = document.getElementById('cqvLightbox');
+  if (!lb.classList.contains('open')) return;
+  if (e.key==='Escape')      cqvCloseLightbox();
+  else if (e.key==='ArrowRight') cqvLightboxNav(1);
+  else if (e.key==='ArrowLeft')  cqvLightboxNav(-1);
+});
+
+// Close on lightbox backdrop click
+document.getElementById('cqvLightbox').addEventListener('click', function(e){
+  if (e.target===this) cqvCloseLightbox();
+});
+
+// Init naming preview
+cqvUpdateNamingPreview();
+</script>
+
+<!-- ── PWA: Service Worker Registration & Auto-Update ── -->
+<script>
+(function() {
+  if (!('serviceWorker' in navigator)) return;
+
+  let pendingWorker = null;
+
+  function showUpdateBanner() {
+    document.getElementById('cqv-update-banner').style.display = 'block';
+  }
+
+  window.cqvApplyUpdate = function() {
+    if (pendingWorker) {
+      pendingWorker.postMessage('SKIP_WAITING');
+    }
+    window.location.reload();
+  };
+
+  navigator.serviceWorker.register('/sw.js').then(reg => {
+
+    // If a new SW is already waiting on first load
+    if (reg.waiting) {
+      pendingWorker = reg.waiting;
+      showUpdateBanner();
+    }
+
+    // If a new SW installs while the page is open
+    reg.addEventListener('updatefound', () => {
+      const newWorker = reg.installing;
+      newWorker.addEventListener('statechange', () => {
+        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+          pendingWorker = newWorker;
+          showUpdateBanner();
+        }
+      });
+    });
+
+  }).catch(err => console.warn('SW registration failed:', err));
+
+  // When SW activates (after reload), take control cleanly
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    window.location.reload();
+  });
+
+  // Silently check for updates every 30 minutes while app is open
+  setInterval(() => {
+    navigator.serviceWorker.ready.then(reg => reg.update());
+  }, 30 * 60 * 1000);
+
+})();
+</script>
+
+</body>
+</html>
